@@ -1,0 +1,11 @@
+{
+    "C_Cpp.default.compilerPath": "C:\\Users\\alper.bile\\Projects\\clang\\bin\\clang.exe",
+    "files.associations": {
+        "lz_string.h": "c",
+        "char_dynamic_array.h": "c",
+        "c_string.h": "c",
+        "stdint.h": "c",
+        "hash_map.h": "c",
+        "string.h": "c"
+    }
+}
