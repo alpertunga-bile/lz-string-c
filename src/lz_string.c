@@ -148,12 +148,13 @@ lz_compress(string_t* uncompressed,
 
   for (ii = 0; ii < uncompressed_length; ++ii) {
     string_set_char(&context_c, string_char_at(uncompressed, ii));
-    size_t context_c_key = string_hash(&context_c);
 
-    if (-1 == hash_map_contains_key(&context_dictionary, context_c_key)) {
+    if (-1 ==
+        hash_map_contains_key(&context_dictionary, string_hash(&context_c))) {
       hash_map_add_value(
-        &context_dictionary, context_c_key, context_dict_size++);
-      hash_map_add_value(&context_dictionary_to_create, context_c_key, 1);
+        &context_dictionary, string_hash(&context_c), context_dict_size++);
+      hash_map_add_value(
+        &context_dictionary_to_create, string_hash(&context_c), 1);
     }
 
     string_set_string(&temp_string, &context_w);
@@ -164,8 +165,8 @@ lz_compress(string_t* uncompressed,
         hash_map_contains_key(&context_dictionary, string_hash(&context_wc))) {
       string_set_string(&context_w, &context_wc);
     } else {
-      if (hash_map_contains_key(&context_dictionary_to_create,
-                                string_hash(&context_w))) {
+      if (0 == hash_map_contains_key(&context_dictionary_to_create,
+                                     string_hash(&context_w))) {
         for (i = 0; i < context_numbits; ++i) {
           context_data_val = context_data_val << 1;
 
@@ -235,8 +236,8 @@ lz_compress(string_t* uncompressed,
   }
 
   if (context_w.length != 0) {
-    if (hash_map_contains_key(&context_dictionary_to_create,
-                              string_hash(&context_w))) {
+    if (0 == hash_map_contains_key(&context_dictionary_to_create,
+                                   string_hash(&context_w))) {
       for (i = 0; i < context_numbits; ++i) {
         context_data_val = context_data_val << 1;
 
@@ -287,7 +288,7 @@ lz_compress(string_t* uncompressed,
         }
 
         context_data_position = 0;
-        add_char_da(&context_data, context_data_val);
+        add_char_da(&context_data, get_char_from_int(context_data_val));
         context_data_val = 0;
       }
     }
@@ -382,9 +383,9 @@ lz_decompress(string_t*   compressed,
 
   int i = 0;
 
-  for (i = 0; i < 3; ++i) {
-    da_string_add_char(&dictionary, i);
-  }
+  da_string_add_char(&dictionary, '0');
+  da_string_add_char(&dictionary, '1');
+  da_string_add_char(&dictionary, '2');
 
   while (power != max_power) {
     uint32_t resb = data.value & data.position;
@@ -456,12 +457,21 @@ lz_decompress(string_t*   compressed,
 
   string_t w;
   string_init(&w);
+  string_set_char(&w, character);
 
   da_string_add_char(&result, character);
   int forever = 1;
 
   while (forever == 1) {
     if (data.index > compressed->length) {
+      string_set_char(uncompressed, '\0');
+
+      string_free(&entry);
+      string_free(&w);
+
+      da_string_free(&dictionary);
+      da_string_free(&result);
+
       return;
     }
 
@@ -506,8 +516,8 @@ lz_decompress(string_t*   compressed,
         }
 
         da_string_add_char(&dictionary, bits);
+        character = dict_size;
         dict_size++;
-        character = dict_size - 1;
         enlarge_in--;
         break;
       case 1:
@@ -531,22 +541,15 @@ lz_decompress(string_t*   compressed,
         }
 
         da_string_add_char(&dictionary, bits);
+        character = dict_size;
         dict_size++;
-        character = dict_size - 1;
         enlarge_in--;
         break;
       case 2:
-        string_t sum_string;
-        string_init(&sum_string);
-
-        for (i = 0; i < result.element_size; ++i) {
-          string_append_string(&sum_string, &result.array[i]);
-        }
-
-        string_set_string(uncompressed, &sum_string);
+        join_string_array(uncompressed, result.array, result.element_size);
 
         string_free(&entry);
-        string_free(&sum_string);
+        string_free(&w);
 
         da_string_free(&dictionary);
         da_string_free(&result);
@@ -562,11 +565,17 @@ lz_decompress(string_t*   compressed,
     string_append_char(&w, string_char_at(&w, 0));
 
     if (dictionary.element_size > character) {
-      string_append_string(&entry, &dictionary.array[character]);
+      string_set_string(&entry, &dictionary.array[character]);
     } else {
       if (character == dict_size) {
         string_append_string(&entry, &w);
       } else {
+        string_free(&entry);
+        string_free(&w);
+
+        da_string_free(&dictionary);
+        da_string_free(&result);
+
         return;
       }
     }
@@ -584,6 +593,7 @@ lz_decompress(string_t*   compressed,
   }
 
   string_free(&entry);
+  string_free(&w);
 
   da_string_free(&dictionary);
   da_string_free(&result);
