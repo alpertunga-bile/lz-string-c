@@ -64,8 +64,15 @@ target_precompile_headers(
 if(PXD_BUILD_TEST)
     set(PXD_TEST_PROJECT_NAME lz-string-c-test)
 
+    set(PXD_TEST_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_src)
+
     set(PXD_TEST_SOURCE_FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/test.c
+        ${PXD_TEST_SRC_DIR}/test.c
+
+        ${PXD_TEST_SRC_DIR}/utility.h
+        ${PXD_TEST_SRC_DIR}/utility.c
+
+        ${PXD_TEST_SRC_DIR}/rktest.h
 
         ${PXD_SOURCE_FILES}
     )
@@ -78,6 +85,7 @@ if(PXD_BUILD_TEST)
 
     target_precompile_headers(
         ${PXD_TEST_PROJECT_NAME} PRIVATE
+        ${PXD_TEST_SRC_DIR}/utility.h
         ${COMMON_STD_HEADERS}
     )
 

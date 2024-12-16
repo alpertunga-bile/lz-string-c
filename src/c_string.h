@@ -1,5 +1,5 @@
-#ifndef _LZ_SRC_C_STRING_H_
-#define _LZ_SRC_C_STRING_H_
+#ifndef _LZ_STRING_SRC_C_STRING_H_
+#define _LZ_STRING_SRC_C_STRING_H_
 
 typedef struct
 {
