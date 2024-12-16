@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "hash_map.h"
-
 void
 string_init(string_t* str)
 {
@@ -144,6 +142,65 @@ string_append_string(string_t* str, string_t* value)
   free(result);
 
   str->length = total_length;
+}
+
+int
+string_compare_string(string_t* a, string_t* b)
+{
+  if (a->length != b->length) {
+    return -1;
+  }
+
+  return strcmp(a->string, b->string);
+}
+
+int
+string_compare_pointer(string_t* a, const char* b)
+{
+  if (a->length != strlen(b)) {
+    return -1;
+  }
+
+  return strcmp(a->string, b);
+}
+
+int
+string_compare_char(string_t* a, char b)
+{
+  if (a->length != 1) {
+    return -1;
+  }
+
+  char temp[2] = { '\0' };
+  temp[0]      = b;
+
+  return strcmp(a->string, temp);
+}
+
+void
+join_string_array(string_t*          result,
+                  string_t*          array,
+                  unsigned long long array_size)
+{
+  int i = 0;
+
+  for (i = 0; i < array_size; ++i) {
+    string_append_string(result, &array[i]);
+  }
+}
+
+size_t
+hash_string(const char* str)
+{
+  unsigned long hash = 5381;
+  int           c    = *str++;
+
+  while (c != 0) {
+    hash = ((hash << 5) + hash) + c;
+    c    = *str++;
+  }
+
+  return hash;
 }
 
 unsigned long long
