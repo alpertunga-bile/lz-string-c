@@ -375,7 +375,8 @@ lz_decompress(string_t*   compressed,
   string_t entry;
   string_init(&entry);
 
-  char character = '\0';
+  char   character        = '\0';
+  size_t character_number = 0;
 
   uint32_t bits      = 0;
   uint32_t max_power = pow(2, 2);
@@ -493,8 +494,9 @@ lz_decompress(string_t*   compressed,
       bits   |= (resb > 0 ? 1 : 0) * power;
       power <<= 1;
     }
+    character_number = bits;
 
-    switch ((character = bits)) {
+    switch (bits) {
       case 0:
         bits      = 0;
         max_power = pow(2, 8);
@@ -516,7 +518,7 @@ lz_decompress(string_t*   compressed,
         }
 
         da_string_add_char(&dictionary, bits);
-        character = dict_size;
+        character_number = dict_size;
         dict_size++;
         enlarge_in--;
         break;
@@ -541,7 +543,7 @@ lz_decompress(string_t*   compressed,
         }
 
         da_string_add_char(&dictionary, bits);
-        character = dict_size;
+        character_number = dict_size;
         dict_size++;
         enlarge_in--;
         break;
@@ -564,10 +566,10 @@ lz_decompress(string_t*   compressed,
 
     string_append_char(&w, string_char_at(&w, 0));
 
-    if (dictionary.element_size > character) {
-      string_set_string(&entry, &dictionary.array[character]);
+    if (dictionary.element_size > character_number) {
+      string_set_string(&entry, &dictionary.array[character_number]);
     } else {
-      if (character == dict_size) {
+      if (character_number == dict_size) {
         string_append_string(&entry, &w);
       } else {
         string_free(&entry);
