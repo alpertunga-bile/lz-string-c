@@ -11,20 +11,6 @@ struct hash_map_ll_node
   void*    next;
 };
 
-size_t
-hash_string(const char* str)
-{
-  unsigned long hash = 5381;
-  int           c    = *str++;
-
-  while (c != 0) {
-    hash = ((hash << 5) + hash) + c;
-    c    = *str++;
-  }
-
-  return hash;
-}
-
 uint32_t
 hash_number(uint32_t x)
 {
