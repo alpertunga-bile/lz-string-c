@@ -81,7 +81,11 @@ if(PXD_BUILD_TEST)
 
     set_target_properties(${PXD_TEST_PROJECT_NAME} PROPERTIES C_STANDARD ${PROJECT_C_STANDARD})
 
-    target_link_libraries(${PXD_TEST_PROJECT_NAME} ${LIBS_TO_LINK} m)
+    if(NOT WIN32)
+      target_link_libraries(${PXD_TEST_PROJECT_NAME} ${LIBS_TO_LINK} m)
+    else()
+      target_link_libraries(${PXD_TEST_PROJECT_NAME} ${LIBS_TO_LINK})
+    endif(NOT WIN32)
 
     target_precompile_headers(
         ${PXD_TEST_PROJECT_NAME} PRIVATE
