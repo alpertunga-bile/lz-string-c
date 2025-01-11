@@ -1,9 +1,7 @@
 #include "lz_string.h"
 
-#include <math.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <stddef.h>
 
 #include "char_dynamic_array.h"
 #include "hash_map.h"
@@ -43,6 +41,16 @@ get_next_value_base64(hash_map_t* alphabet, char character)
   hash_map_get_value(alphabet, character, &value);
 
   return value;
+}
+
+int pow_int(int bottom, int up) {
+  int result = 1;
+
+  while(up--) {
+    result *= bottom;
+  }
+
+  return result;
 }
 
 /*
@@ -198,7 +206,7 @@ lz_compress(string_t* uncompressed,
 
         context_enlarge_in--;
         if (0 == context_enlarge_in) {
-          context_enlarge_in = pow(2, context_numbits);
+          context_enlarge_in = pow_int(2, context_numbits);
           context_numbits++;
         }
 
@@ -225,7 +233,7 @@ lz_compress(string_t* uncompressed,
 
       context_enlarge_in--;
       if (0 == context_enlarge_in) {
-        context_enlarge_in = pow(2, context_numbits);
+        context_enlarge_in = pow_int(2, context_numbits);
         context_numbits++;
       }
 
@@ -269,7 +277,7 @@ lz_compress(string_t* uncompressed,
 
       context_enlarge_in--;
       if (context_enlarge_in == 0) {
-        context_enlarge_in = pow(2, context_numbits);
+        context_enlarge_in = pow_int(2, context_numbits);
         context_numbits++;
       }
 
@@ -295,7 +303,7 @@ lz_compress(string_t* uncompressed,
 
     context_enlarge_in--;
     if (context_enlarge_in == 0) {
-      context_enlarge_in = pow(2, context_numbits);
+      context_enlarge_in = pow_int(2, context_numbits);
       context_numbits++;
     }
   }
@@ -379,7 +387,7 @@ lz_decompress(string_t*   compressed,
   size_t character_number = 0;
 
   uint32_t bits      = 0;
-  uint32_t max_power = pow(2, 2);
+  uint32_t max_power = pow_int(2, 2);
   uint32_t power     = 1;
 
   int i = 0;
@@ -406,7 +414,7 @@ lz_decompress(string_t*   compressed,
   switch (bits) {
     case 0:
       bits      = 0;
-      max_power = pow(2, 8);
+      max_power = pow_int(2, 8);
       power     = 1;
 
       while (power != max_power) {
@@ -427,7 +435,7 @@ lz_decompress(string_t*   compressed,
       break;
     case 1:
       bits      = 0;
-      max_power = pow(2, 16);
+      max_power = pow_int(2, 16);
       power     = 1;
 
       while (power != max_power) {
@@ -477,7 +485,7 @@ lz_decompress(string_t*   compressed,
     }
 
     bits      = 0;
-    max_power = pow(2, numbits);
+    max_power = pow_int(2, numbits);
     power     = 1;
 
     while (power != max_power) {
@@ -499,7 +507,7 @@ lz_decompress(string_t*   compressed,
     switch (bits) {
       case 0:
         bits      = 0;
-        max_power = pow(2, 8);
+        max_power = pow_int(2, 8);
         power     = 1;
 
         while (power != max_power) {
@@ -524,7 +532,7 @@ lz_decompress(string_t*   compressed,
         break;
       case 1:
         bits      = 0;
-        max_power = pow(2, 16);
+        max_power = pow_int(2, 16);
         power     = 1;
 
         while (power != max_power) {
@@ -560,7 +568,7 @@ lz_decompress(string_t*   compressed,
     }
 
     if (enlarge_in == 0) {
-      enlarge_in = pow(2, numbits);
+      enlarge_in = pow_int(2, numbits);
       numbits++;
     }
 
@@ -589,7 +597,7 @@ lz_decompress(string_t*   compressed,
     string_set_string(&w, &entry);
 
     if (enlarge_in == 0) {
-      enlarge_in = pow(2, numbits);
+      enlarge_in = pow_int(2, numbits);
       numbits++;
     }
   }

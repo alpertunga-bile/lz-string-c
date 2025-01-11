@@ -1,0 +1,12 @@
+#ifndef _LZ_STRING_SRC_C_U8STRING_H_
+#define _LZ_STRING_SRC_C_U8STRING_H_
+
+typedef struct u8string {
+  unsigned char* string;
+  unsigned long long length;
+} u8string_t;
+
+void u8string_init(u8string_t* str);
+void u8string_free(u8string_t* str);
+
+#endif

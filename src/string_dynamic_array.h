@@ -1,6 +1,7 @@
 #ifndef _LZ_STRING_SRC_STRING_DYNAMIC_ARRAY_H_
 #define _LZ_STRING_SRC_STRING_DYNAMIC_ARRAY_H_
 
+#include <stddef.h>
 #include "c_string.h"
 
 typedef struct
@@ -13,8 +14,8 @@ typedef struct
 
 void
 da_string_init(string_dynamic_array_t* da,
-               unsigned long long      init_size,
-               unsigned long long      increment_size);
+               size_t init_size,
+               size_t increment_size);
 
 void
 da_string_add_char(string_dynamic_array_t* da, char value);
