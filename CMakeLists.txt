@@ -43,6 +43,7 @@ include_directories(
 set(COMMON_STD_HEADERS
     <string.h>
     <stdint.h>
+    <stddef.h>
     <stdlib.h>
 )
 
@@ -63,7 +64,6 @@ target_precompile_headers(
 
 if(PXD_BUILD_TEST)
     set(PXD_TEST_PROJECT_NAME lz-string-c-test)
-
     set(PXD_TEST_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_src)
 
     set(PXD_TEST_SOURCE_FILES
@@ -81,7 +81,7 @@ if(PXD_BUILD_TEST)
 
     set_target_properties(${PXD_TEST_PROJECT_NAME} PROPERTIES C_STANDARD ${PROJECT_C_STANDARD})
 
-    target_link_libraries(${PXD_TEST_PROJECT_NAME} ${LIBS_TO_LINK})
+    target_link_libraries(${PXD_TEST_PROJECT_NAME} ${LIBS_TO_LINK} m)
 
     target_precompile_headers(
         ${PXD_TEST_PROJECT_NAME} PRIVATE
@@ -95,4 +95,3 @@ unset(PXD_BUILD_TEST CACHE)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
-        
