@@ -78,6 +78,7 @@ hash_map_add_value(hash_map_t* hash_map, size_t key, uint32_t value)
     prev_node = current_node;
 
     if (key == current_node->key) {
+      current_node->value = value;
       return;
     }
 

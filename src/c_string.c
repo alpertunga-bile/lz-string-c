@@ -180,7 +180,7 @@ string_compare_char(string_t* a, char b)
 void
 join_string_array(string_t*          result,
                   string_t*          array,
-                  unsigned long long array_size)
+                  size_t array_size)
 {
   int i = 0;
 

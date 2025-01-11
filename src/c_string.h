@@ -1,10 +1,12 @@
 #ifndef _LZ_STRING_SRC_C_STRING_H_
 #define _LZ_STRING_SRC_C_STRING_H_
 
+#include <stddef.h>
+
 typedef struct
 {
   char*              string;
-  unsigned long long length;
+  size_t length;
 } string_t;
 
 void
@@ -50,7 +52,7 @@ string_compare_char(string_t* a, char b);
 void
 join_string_array(string_t*          result,
                   string_t*          array,
-                  unsigned long long array_size);
+                  size_t array_size);
 
 void
 string_free(string_t* str);

@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <math.h>
 
 #include "char_dynamic_array.h"
 #include "hash_map.h"
@@ -41,16 +42,6 @@ get_next_value_base64(hash_map_t* alphabet, char character)
   hash_map_get_value(alphabet, character, &value);
 
   return value;
-}
-
-int pow_int(int bottom, int up) {
-  int result = 1;
-
-  while(up--) {
-    result *= bottom;
-  }
-
-  return result;
 }
 
 /*
@@ -176,9 +167,9 @@ lz_compress(string_t* uncompressed,
       if (0 == hash_map_contains_key(&context_dictionary_to_create,
                                      string_hash(&context_w))) {
         for (i = 0; i < context_numbits; ++i) {
-          context_data_val = context_data_val << 1;
+          context_data_val = context_data_val << 1u;
 
-          if (context_data_position != bits_per_char - 1) {
+          if (context_data_position != bits_per_char - 1u) {
             context_data_position++;
             continue;
           }
@@ -191,8 +182,8 @@ lz_compress(string_t* uncompressed,
         value = string_char_at(&context_w, 0);
 
         for (i = 0; i < 8; ++i) {
-          context_data_val = (context_data_val << 1) | (value & 1);
-          value            = value >> 1;
+          context_data_val = (context_data_val << 1u) | (value & 1u);
+          value            = value >> 1u;
 
           if (context_data_position != bits_per_char - 1) {
             context_data_position++;
@@ -206,7 +197,7 @@ lz_compress(string_t* uncompressed,
 
         context_enlarge_in--;
         if (0 == context_enlarge_in) {
-          context_enlarge_in = pow_int(2, context_numbits);
+          context_enlarge_in = pow(2, context_numbits);
           context_numbits++;
         }
 
@@ -217,8 +208,8 @@ lz_compress(string_t* uncompressed,
           &context_dictionary, string_hash(&context_w), &value);
 
         for (i = 0; i < context_numbits; ++i) {
-          context_data_val = (context_data_val << 1) | (value & 1);
-          value            = value >> 1;
+          context_data_val = (context_data_val << 1u) | (value & 1u);
+          value            = value >> 1u;
 
           if (context_data_position != bits_per_char - 1) {
             context_data_position++;
@@ -233,7 +224,7 @@ lz_compress(string_t* uncompressed,
 
       context_enlarge_in--;
       if (0 == context_enlarge_in) {
-        context_enlarge_in = pow_int(2, context_numbits);
+        context_enlarge_in = pow(2, context_numbits);
         context_numbits++;
       }
 
@@ -247,7 +238,7 @@ lz_compress(string_t* uncompressed,
     if (0 == hash_map_contains_key(&context_dictionary_to_create,
                                    string_hash(&context_w))) {
       for (i = 0; i < context_numbits; ++i) {
-        context_data_val = context_data_val << 1;
+        context_data_val = context_data_val << 1u;
 
         if (context_data_position != bits_per_char - 1) {
           context_data_position++;
@@ -261,9 +252,9 @@ lz_compress(string_t* uncompressed,
 
       value = string_char_at(&context_w, 0);
 
-      for (int i = 0; i < 8; ++i) {
-        context_data_val = (context_data_val << 1) | (value & 1);
-        value            = value >> 1;
+      for (i = 0; i < 8; ++i) {
+        context_data_val = (context_data_val << 1u) | (value & 1u);
+        value            = value >> 1u;
 
         if (context_data_position != bits_per_char - 1) {
           context_data_position++;
@@ -277,7 +268,7 @@ lz_compress(string_t* uncompressed,
 
       context_enlarge_in--;
       if (context_enlarge_in == 0) {
-        context_enlarge_in = pow_int(2, context_numbits);
+        context_enlarge_in = pow(2, context_numbits);
         context_numbits++;
       }
 
@@ -287,8 +278,8 @@ lz_compress(string_t* uncompressed,
       hash_map_get_value(&context_dictionary, string_hash(&context_w), &value);
 
       for (i = 0; i < context_numbits; ++i) {
-        context_data_val = (context_data_val << 1) | (value & 1);
-        value            = value >> 1;
+        context_data_val = (context_data_val << 1u) | (value & 1u);
+        value            = value >> 1u;
 
         if (context_data_position != bits_per_char - 1) {
           context_data_position++;
@@ -303,15 +294,15 @@ lz_compress(string_t* uncompressed,
 
     context_enlarge_in--;
     if (context_enlarge_in == 0) {
-      context_enlarge_in = pow_int(2, context_numbits);
+      context_enlarge_in = pow(2, context_numbits);
       context_numbits++;
     }
   }
 
   value = 2;
   for (i = 0; i < context_numbits; ++i) {
-    context_data_val = (context_data_val << 1) | (value & 1);
-    value            = value >> 1;
+    context_data_val = (context_data_val << 1u) | (value & 1u);
+    value            = value >> 1u;
 
     if (context_data_position != bits_per_char - 1) {
       context_data_position++;
@@ -326,14 +317,14 @@ lz_compress(string_t* uncompressed,
   int loop = 1;
 
   do {
-    context_data_val = context_data_val << 1;
+    context_data_val = context_data_val << 1u;
 
-    if (context_data_position == bits_per_char - 1) {
-      add_char_da(&context_data, get_char_from_int(context_data_val));
-      loop = 0;
-    } else {
+    if(context_data_position != bits_per_char - 1) {
       context_data_position++;
     }
+
+    add_char_da(&context_data, get_char_from_int(context_data_val));
+    loop = 0;
   } while (loop == 1);
 
   add_char_da(&context_data, '\0');
@@ -387,7 +378,7 @@ lz_decompress(string_t*   compressed,
   size_t character_number = 0;
 
   uint32_t bits      = 0;
-  uint32_t max_power = pow_int(2, 2);
+  uint32_t max_power = pow(2, 2);
   uint32_t power     = 1;
 
   int i = 0;
@@ -414,7 +405,7 @@ lz_decompress(string_t*   compressed,
   switch (bits) {
     case 0:
       bits      = 0;
-      max_power = pow_int(2, 8);
+      max_power = pow(2, 8);
       power     = 1;
 
       while (power != max_power) {
@@ -435,7 +426,7 @@ lz_decompress(string_t*   compressed,
       break;
     case 1:
       bits      = 0;
-      max_power = pow_int(2, 16);
+      max_power = pow(2, 16);
       power     = 1;
 
       while (power != max_power) {
@@ -485,7 +476,7 @@ lz_decompress(string_t*   compressed,
     }
 
     bits      = 0;
-    max_power = pow_int(2, numbits);
+    max_power = pow(2, numbits);
     power     = 1;
 
     while (power != max_power) {
@@ -507,7 +498,7 @@ lz_decompress(string_t*   compressed,
     switch (bits) {
       case 0:
         bits      = 0;
-        max_power = pow_int(2, 8);
+        max_power = pow(2, 8);
         power     = 1;
 
         while (power != max_power) {
@@ -532,7 +523,7 @@ lz_decompress(string_t*   compressed,
         break;
       case 1:
         bits      = 0;
-        max_power = pow_int(2, 16);
+        max_power = pow(2, 16);
         power     = 1;
 
         while (power != max_power) {
@@ -568,7 +559,7 @@ lz_decompress(string_t*   compressed,
     }
 
     if (enlarge_in == 0) {
-      enlarge_in = pow_int(2, numbits);
+      enlarge_in = pow(2, numbits);
       numbits++;
     }
 
@@ -597,7 +588,7 @@ lz_decompress(string_t*   compressed,
     string_set_string(&w, &entry);
 
     if (enlarge_in == 0) {
-      enlarge_in = pow_int(2, numbits);
+      enlarge_in = pow(2, numbits);
       numbits++;
     }
   }
