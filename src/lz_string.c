@@ -321,10 +321,10 @@ lz_compress(string_t* uncompressed,
 
     if(context_data_position != bits_per_char - 1) {
       context_data_position++;
+    } else {
+      add_char_da(&context_data, get_char_from_int(context_data_val));
+      loop = 0;
     }
-
-    add_char_da(&context_data, get_char_from_int(context_data_val));
-    loop = 0;
   } while (loop == 1);
 
   add_char_da(&context_data, '\0');
